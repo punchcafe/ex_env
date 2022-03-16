@@ -4,6 +4,7 @@ defmodule ExEnv.ModuleQuoted do
 
 
     # TODO: add Genserver for maintaining this state
+    # use a registry for handling different module agents
 
     defmodule Def do
         defstruct [:match_atom, :return_value]
@@ -15,6 +16,7 @@ defmodule ExEnv.ModuleQuoted do
 
     def add_definition(mod_quoted = %__MODULE__{clause_definitions: defs}, new_def = %__MODULE__.Def{match_atom: new_def_match}) do
         without_existing = Enum.reject(defs, fn %__MODULE__.Def{match_atom: match_atom} -> new_def_match == match_atom end)
+        #TODO: add emit warning, potentially have option to raise on existing/different method
         %__MODULE__{mod_quoted | clause_definitions: [new_def | without_existing ]}
     end
 
