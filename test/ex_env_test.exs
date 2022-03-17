@@ -4,7 +4,6 @@ defmodule ExEnvTest do
 
   alias ExEnv.ModuleOwner
 
-
   test "EXPERIMENTAL" do
     test_mod = %ModuleOwner{mod_name: MyEnv, config_map: %{hello: "world"}}
     test_mod |> ModuleOwner.module_quoted() |> Code.compile_quoted()
