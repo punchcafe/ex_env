@@ -10,6 +10,7 @@ defmodule ExEnv.ModuleOwner.State do
 
   def module_quoted(state = %__MODULE__{mod_name: name}) do
     body = render_body(state)
+
     quote do
       defmodule unquote(Module.concat(ExEnv, name)) do
         unquote(body)
@@ -19,7 +20,7 @@ defmodule ExEnv.ModuleOwner.State do
   end
 
   defp render_body(%__MODULE__{config_map: map, mod_name: name}) when map == %{} do
-    quote do 
+    quote do
     end
   end
 
