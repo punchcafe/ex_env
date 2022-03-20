@@ -1,7 +1,6 @@
 defmodule ExEnv.SimpleServer do
   use GenServer
-  alias ExEnv.ModuleOwner.State
-  alias ExEnv.ModuleOwner
+  alias ExEnv.State
 
   def start(_, _) do
     Supervisor.start_link([child_spec()], strategy: :one_for_one)

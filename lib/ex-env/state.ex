@@ -1,4 +1,4 @@
-defmodule ExEnv.ModuleOwner.State do
+defmodule ExEnv.State do
   defstruct config_map: %{}, mod_name: nil
 
   # add custom guard clause for making sure only valid types passed to add definition
