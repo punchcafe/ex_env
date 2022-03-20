@@ -36,7 +36,7 @@ defmodule ExEnv.ModuleOwner.State do
 
   defp clause_quoted({k, v}) do
     quote do
-      def env(unquote(k)), do: unquote(v)
+      def env(unquote(k)), do: unquote(Macro.escape(v))
     end
   end
 end

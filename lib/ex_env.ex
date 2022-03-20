@@ -4,9 +4,9 @@ defmodule ExEnv do
   # def put(mod, key, value), do: GenServer.call(ExEnv.Server, {:put, mod, key, value})
   def put(mod, key, value), do: GenServer.call(ExEnv.SimpleServer, {:put, mod, key, value})
 
-  def fetch_env(mod, key, value) do
+  def fetch_env(mod, key) do
     {:ok, Module.concat(ExEnv, mod).env(key)}
-  catch
+  rescue
     UndefinedFunctionError -> {:ok, nil}
   end
 end

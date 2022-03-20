@@ -39,7 +39,30 @@ defmodule ExEnvTest do
     test "unknown key / value returns nil" do
       ExEnv.put(UnknownKeyWordMod, :hello, "world")
 
-      assert ExEnv.TestModuleFour.env(:bello) == nil
+      assert ExEnv.UnknownKeyWordMod.env(:bello) == nil
+    end
+
+    test "can store a map in ExEnv" do
+      map = %{"hello" => "world"}
+      ExEnv.put(MapVariable, :my_map, map)
+
+      assert ExEnv.MapVariable.env(:my_map) == map
+    end
+  end
+
+  describe "ExEnv.fetch_env/3" do
+    test "can retrieve config" do
+      ExEnv.put(FetchEnvTestModuleOne, :hello, "world")
+      assert ExEnv.fetch_env(FetchEnvTestModuleOne, :hello) == {:ok, "world"}
+    end
+
+    test "unknown module returns nil" do
+      assert ExEnv.fetch_env(UnknownFetchEnvTestModule, :hello) == {:ok, nil}
+    end
+
+    test "unknown key returns nil" do
+      ExEnv.put(FetchEnvTestModuleTwo, :hello, "world")
+      assert ExEnv.fetch_env(FetchEnvTestModuleTwo, :abcd) == {:ok, nil}
     end
   end
 end
