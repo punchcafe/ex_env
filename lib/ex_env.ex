@@ -2,7 +2,9 @@ defmodule ExEnv do
   # TODO: implement gen server with registry 
 
   # def put(mod, key, value), do: GenServer.call(ExEnv.Server, {:put, mod, key, value})
-  def put(mod, key, value), do: GenServer.call(ExEnv.SimpleServer, {:put, mod, key, value})
+  def put(mod, key, value) when is_atom(mod) and is_atom(key) or is_binary(key) do
+    GenServer.call(ExEnv.SimpleServer, {:put, mod, key, value})
+  end
 
   def fetch_env(mod, key) do
     {:ok, Module.concat(ExEnv, mod).env(key)}
