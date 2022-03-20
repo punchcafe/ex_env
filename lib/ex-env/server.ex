@@ -1,4 +1,4 @@
-defmodule ExEnv.SimpleServer do
+defmodule ExEnv.Server do
   use GenServer
   alias ExEnv.State
 
