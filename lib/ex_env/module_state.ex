@@ -1,4 +1,9 @@
-defmodule ExEnv.State do
+defmodule ExEnv.ModuleState do
+  @moduledoc """
+  Context for a single module definition, as well as functions for rendering it as quoted
+  code.
+  """
+
   defstruct config_map: %{}, mod_name: nil
 
   # add custom guard clause for making sure only valid types passed to add definition

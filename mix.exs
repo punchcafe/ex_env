@@ -15,7 +15,7 @@ defmodule ExEnv.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {ExEnv.SimpleServer, []}
+      mod: {ExEnv.Server, []}
     ]
   end
 
