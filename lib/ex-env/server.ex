@@ -8,21 +8,23 @@ defmodule ExEnv.Server do
 
   def start(_, _) do
     :ets.new(:ex_env_module_owners_state, [:public, :named_table])
+
     child_specs = [
       {Registry, [keys: :unique, name: @registry_name]},
       DynamicSupervisor.child_spec(name: @dynamic_supervisor_name, strategy: :one_for_one),
       __MODULE__
     ]
-    Supervisor.start_link(child_specs, [strategy: :one_for_one])
+
+    Supervisor.start_link(child_specs, strategy: :one_for_one)
   end
 
   def child_spec(_) do
     %{
-        id: __MODULE__,
-        start: {GenServer, :start_link, [__MODULE__, [], [name: __MODULE__]]},
-        name: __MODULE__,
-        type: :worker,
-        restart: :permanent
+      id: __MODULE__,
+      start: {GenServer, :start_link, [__MODULE__, [], [name: __MODULE__]]},
+      name: __MODULE__,
+      type: :worker,
+      restart: :permanent
     }
   end
 
@@ -41,7 +43,7 @@ defmodule ExEnv.Server do
             {ModuleOwner, [module, @registry_name]}
           )
 
-          :timer.sleep(50)
+        :timer.sleep(50)
         handle_call(msg, nil, nil)
 
       [{pid, _}] ->
