@@ -19,7 +19,7 @@ defmodule ExEnvTest do
     test "can define multiple env vars for one module" do
       ExEnv.put(TestModuleThree, :hello, "world")
       ExEnv.put(TestModuleThree, :good_to_see_you, "again!")
-      
+
       assert ExEnv.TestModuleThree.env(:hello) == "world"
       assert ExEnv.TestModuleThree.env(:good_to_see_you) == "again!"
     end
@@ -29,7 +29,7 @@ defmodule ExEnvTest do
       ExEnv.put(TestModuleFour, :four_one, "four_one!")
       ExEnv.put(TestModuleFive, :five, "five")
       ExEnv.put(TestModuleFive, :five_one, "five_one!")
-      
+
       assert ExEnv.TestModuleFour.env(:four) == "four"
       assert ExEnv.TestModuleFour.env(:four_one) == "four_one!"
       assert ExEnv.TestModuleFive.env(:five) == "five"
@@ -47,6 +47,34 @@ defmodule ExEnvTest do
       ExEnv.put(MapVariable, :my_map, map)
 
       assert ExEnv.MapVariable.env(:my_map) == map
+    end
+  end
+
+  describe "ExEnv.put/2" do
+    test "can configure module by passing map" do
+      ExEnv.put(MapTestingConfigMod, %{hello: "world", this_is: "a map"})
+      assert ExEnv.MapTestingConfigMod.env(:hello) == "world"
+      assert ExEnv.MapTestingConfigMod.env(:this_is) == "a map"
+    end
+
+    test "can configure module by passing a keyword list" do
+      ExEnv.put(KeywordListTestingConfigMod, hello: "world", this_is: "a list")
+      assert ExEnv.KeywordListTestingConfigMod.env(:hello) == "world"
+      assert ExEnv.KeywordListTestingConfigMod.env(:this_is) == "a list"
+    end
+
+    test "configuring with a keyword list overwrites existing config" do
+      ExEnv.put(KeywordListExistingTestingConfigMod, good: "bye", this_is: "a list")
+      assert ExEnv.KeywordListExistingTestingConfigMod.env(:good) == "bye"
+      ExEnv.put(KeywordListExistingTestingConfigMod, hello: "world", this_is: "a list")
+      assert ExEnv.KeywordListExistingTestingConfigMod.env(:good) == nil
+    end
+
+    test "configuring with a map overwrites existing config" do
+      ExEnv.put(MapExistingTestingConfigMod, %{good: "bye", this_is: "a list"})
+      assert ExEnv.MapExistingTestingConfigMod.env(:good) == "bye"
+      ExEnv.put(MapExistingTestingConfigMod, %{hello: "world", this_is: "a list"})
+      assert ExEnv.MapExistingTestingConfigMod.env(:good) == nil
     end
   end
 

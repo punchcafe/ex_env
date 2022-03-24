@@ -13,6 +13,15 @@ defmodule ExEnv.ModuleState do
     {:ok, %__MODULE__{module_owner | config_map: Map.put(map, key, value)}}
   end
 
+  def put(module_owner = %__MODULE__{config_map: map}, keyword) when is_list(keyword) do
+    keyword |> Enum.reduce(%{}, fn {k, v}, acc -> Map.put(acc, k, v) end) |> then(&put(module_owner, &1))
+  end
+
+  def put(module_owner, map) when is_map(map) do
+    # TODO: potentially assert on key types
+    {:ok, %__MODULE__{module_owner | config_map: map}}
+  end
+
   def module_quoted(state = %__MODULE__{mod_name: name}) do
     body = render_body(state)
 

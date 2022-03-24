@@ -22,9 +22,16 @@ defmodule ExEnv.Server do
   end
 
   @impl GenServer
-  def handle_call(msg = {:put, module, key, value}, _from, state) do
+  def handle_call(msg = {:put, module, input}, _from, state) do
     state_entry = state[module] || %State{mod_name: module}
-    {:ok, state_entry} = State.put(state_entry, key, value)
+
+    {:ok, state_entry} =
+      case input do
+        {k, v} -> State.put(state_entry, k, v)
+        map = %{} -> State.put(state_entry, map)
+        list when is_list(list) -> State.put(state_entry, list)
+      end
+
     state_entry |> State.module_quoted() |> Code.compile_quoted()
     {:reply, :ok, Map.put(state, module, state_entry)}
   end
