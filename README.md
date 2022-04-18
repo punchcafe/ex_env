@@ -9,6 +9,7 @@ I'll see my self out, thank you very much.
 - Benchee tests against atomic pattern matching v map lookup
 ## TODOs
 - `fetch_env!`, `fetch_env` and `get_env` formats
+- Batching on put_env to avoid such slow times
 - Doc examples
 - Pass dialyzer
 - Pass credo
