@@ -6,19 +6,17 @@ defmodule ExEnv.ModuleState do
 
   defstruct config_map: %{}, mod_name: nil
 
-  # add custom guard clause for making sure only valid types passed to add definition
-
   def put(module_owner = %__MODULE__{config_map: map}, key, value) do
-    # TODO: add emit warning, potentially have option to raise on existing/different method
     {:ok, %__MODULE__{module_owner | config_map: Map.put(map, key, value)}}
   end
 
   def put(module_owner = %__MODULE__{config_map: map}, keyword) when is_list(keyword) do
-    keyword |> Enum.reduce(%{}, fn {k, v}, acc -> Map.put(acc, k, v) end) |> then(&put(module_owner, &1))
+    keyword
+    |> Enum.reduce(%{}, fn {k, v}, acc -> Map.put(acc, k, v) end)
+    |> then(&put(module_owner, &1))
   end
 
   def put(module_owner, map) when is_map(map) do
-    # TODO: potentially assert on key types
     {:ok, %__MODULE__{module_owner | config_map: map}}
   end
 

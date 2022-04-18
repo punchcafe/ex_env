@@ -16,6 +16,14 @@ defmodule ExEnvTest do
       assert ExEnv.TestModuleTwo.env(:hello) == "again!"
     end
 
+    test "cannot use invalid module names" do
+      assert ExEnv.put(:hello, :hello, "world") == {:error, :invalid_module}
+    end
+
+    test "cannot use invalid key types names" do
+      assert ExEnv.put(:hello, 123, "world") == {:error, :invalid_key}
+    end
+
     test "can define multiple env vars for one module" do
       ExEnv.put(TestModuleThree, :hello, "world")
       ExEnv.put(TestModuleThree, :good_to_see_you, "again!")
@@ -76,12 +84,38 @@ defmodule ExEnvTest do
       ExEnv.put(MapExistingTestingConfigMod, %{hello: "world", this_is: "a list"})
       assert ExEnv.MapExistingTestingConfigMod.env(:good) == nil
     end
+
+    test "fails configuration if passed non-keyword list" do
+      assert {:error, :invalid_config_entry} == ExEnv.put(ListTestingConfig, [1, 2, 3])
+    end
+
+    test "fails configuration if passed map with illegal keys" do
+      assert {:error, :invalid_config_entry} == ExEnv.put(IllegalMap, %{1 => "hello"})
+    end
+
+    test "fails configuration if passed nil config" do
+      assert {:error, :invalid_config} == ExEnv.put(IllegalMap, nil)
+    end
   end
 
   describe "ExEnv.fetch_env/3" do
     test "can retrieve config" do
       ExEnv.put(FetchEnvTestModuleOne, :hello, "world")
+      ExEnv.put(FetchEnvTestModuleOne, "hello", :world)
       assert ExEnv.fetch_env(FetchEnvTestModuleOne, :hello) == {:ok, "world"}
+      assert ExEnv.fetch_env(FetchEnvTestModuleOne, "hello") == {:ok, :world}
+    end
+
+    test "illegal module name return nil" do
+      assert ExEnv.fetch_env(:hello, :hello) == {:ok, nil}
+    end
+
+    test "invalid module type returns error" do
+      assert ExEnv.fetch_env("hello", :hello) == {:error, :invalid_module}
+    end
+
+    test "invalid key type returns error" do
+      assert ExEnv.fetch_env(Hello, 123) == {:error, :invalid_key}
     end
 
     test "unknown module returns nil" do
