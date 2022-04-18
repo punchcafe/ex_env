@@ -1,6 +1,6 @@
-defmodule ExEnv.Server do
+defmodule Zapp.Server do
   use GenServer
-  alias ExEnv.ModuleState, as: State
+  alias Zapp.ModuleState, as: State
 
   def start(_, _) do
     Supervisor.start_link([child_spec()], strategy: :one_for_one)

@@ -1,9 +1,9 @@
-defmodule ExEnv do
+defmodule Zapp do
   defguard is_valid(mod, key) when is_atom(mod) and (is_atom(key) or is_binary(key))
 
   def put(mod, key, value) when is_valid(mod, key) do
     with :ok <- validate_mod(mod) do
-      GenServer.call(ExEnv.Server, {:put, mod, {key, value}})
+      GenServer.call(Zapp.Server, {:put, mod, {key, value}})
     end
   end
 
@@ -13,7 +13,7 @@ defmodule ExEnv do
   def put(mod, config) when is_atom(mod) and (is_map(config) or is_list(config)) do
     with :ok <- validate_mod(mod),
          :ok <- validate_config(config) do
-      GenServer.call(ExEnv.Server, {:put, mod, config})
+      GenServer.call(Zapp.Server, {:put, mod, config})
     end
   end
 
@@ -24,7 +24,7 @@ defmodule ExEnv do
   def put!(module, config), do: raise_on_error(fn -> put(module, config) end) 
 
   def fetch_env(mod, key) when is_valid(mod, key) do
-    {:ok, Module.concat(ExEnv, mod).env(key)}
+    {:ok, Module.concat(Zapp, mod).env(key)}
   rescue
     UndefinedFunctionError -> {:ok, nil}
   end

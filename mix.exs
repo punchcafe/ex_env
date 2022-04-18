@@ -1,9 +1,9 @@
-defmodule ExEnv.MixProject do
+defmodule Zapp.MixProject do
   use Mix.Project
 
   def project do
     [
-      app: :ex_env,
+      app: :zapp,
       version: "0.1.0",
       elixir: "~> 1.13",
       start_permanent: Mix.env() == :prod,
@@ -14,7 +14,7 @@ defmodule ExEnv.MixProject do
   def application do
     [
       extra_applications: [:logger],
-      mod: {ExEnv.Server, []}
+      mod: {Zapp.Server, []}
     ]
   end
 

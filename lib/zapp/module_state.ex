@@ -1,4 +1,4 @@
-defmodule ExEnv.ModuleState do
+defmodule Zapp.ModuleState do
   @moduledoc """
   Context for a single module definition, as well as functions for rendering it as quoted
   code.
@@ -24,7 +24,7 @@ defmodule ExEnv.ModuleState do
     body = render_body(state)
 
     quote do
-      defmodule unquote(Module.concat(ExEnv, name)) do
+      defmodule unquote(Module.concat(Zapp, name)) do
         unquote(body)
         def env(_), do: nil
       end
