@@ -1,5 +1,14 @@
 defmodule Zapp do
+  @moduledoc """
+  A module providing utility functions for setting environment variables with very fast read speeds.
+  """
   defguard is_valid(mod, key) when is_atom(mod) and (is_atom(key) or is_binary(key))
+
+  @doc """
+  Sets an environment variable for a given module and key.
+  """
+  @spec put(mod :: atom(), key :: atom() | String.t(), value :: any()) :: :ok | {:error, atom()}
+  def put(mod, key, value)
 
   def put(mod, key, value) when is_valid(mod, key) do
     with :ok <- validate_mod(mod) do
@@ -9,6 +18,12 @@ defmodule Zapp do
 
   def put(mod, _, _) when is_atom(mod), do: {:error, :invalid_key}
   def put(_, _, _), do: {:error, :invalid_module}
+
+  @doc """
+  Sets a number of environment variables from a map or keyword list under a given module.
+  """
+  @spec put(mod :: atom(), config :: map() | Keyword.t()) :: :ok | {:error, atom()}
+  def put(mod, config)
 
   def put(mod, config) when is_atom(mod) and (is_map(config) or is_list(config)) do
     with :ok <- validate_mod(mod),
@@ -20,8 +35,23 @@ defmodule Zapp do
   def put(mod, _) when is_atom(mod), do: {:error, :invalid_config}
   def put(_, _), do: {:error, :invalid_module}
 
-  def put!(module, key, value), do: raise_on_error(fn -> put(module, key, value) end) 
-  def put!(module, config), do: raise_on_error(fn -> put(module, config) end) 
+  @doc """
+  Raises exception on failure of `put/3`.
+  """
+  @spec put!(mod :: atom(), key :: atom() | String.t(), value :: any()) :: :ok | {:error, atom()}
+  def put!(module, key, value), do: raise_on_error(fn -> put(module, key, value) end)
+
+  @doc """
+  Raises exception on failure of `put/2`.
+  """
+  @spec put!(mod :: atom(), config :: map() | Keyword.t()) :: :ok | no_return()
+  def put!(module, config), do: raise_on_error(fn -> put(module, config) end)
+
+  @doc """
+  Fetches an environment variable for a given module and key.
+  """
+  @spec fetch_env(mod :: atom(), key :: atom() | String.t()) :: any()
+  def fetch_env(mod, key)
 
   def fetch_env(mod, key) when is_valid(mod, key) do
     {:ok, Module.concat(Zapp, mod).env(key)}
@@ -53,7 +83,6 @@ defmodule Zapp do
 
   defp raise_on_error(function) do
     case function.() do
-      {:ok, result} -> result
       :ok -> :ok
       {:error, err} -> raise RuntimeError
     end

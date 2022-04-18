@@ -1,8 +1,9 @@
 defmodule ZappTest do
+  
   use ExUnit.Case, async: false
   doctest Zapp
 
-  alias Zapp.ModuleOwner
+  Code.put_compiler_option(:no_warn_undefined, :all)
 
   describe "Zapp.put/3" do
     test "can create a module" do
@@ -109,7 +110,6 @@ defmodule ZappTest do
       assert {:error, :invalid_config} == Zapp.put(IllegalMap, nil)
     end
   end
-
 
   describe "Zapp.put!/2" do
     test "can configure module by passing map or keyword list" do

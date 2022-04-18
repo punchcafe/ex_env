@@ -1,12 +1,17 @@
 defmodule Zapp.Server do
+  @moduledoc false
+
+  ## Private module for internal use
+
   use GenServer
   alias Zapp.ModuleState, as: State
 
+  @impl Application
   def start(_, _) do
     Supervisor.start_link([child_spec()], strategy: :one_for_one)
   end
 
-  def child_spec() do
+  defp child_spec() do
     %{
       id: __MODULE__,
       start: {GenServer, :start_link, [__MODULE__, [], [name: __MODULE__]]},
@@ -22,7 +27,7 @@ defmodule Zapp.Server do
   end
 
   @impl GenServer
-  def handle_call(msg = {:put, module, input}, _from, state) do
+  def handle_call({:put, module, input}, _from, state) do
     state_entry = state[module] || %State{mod_name: module}
 
     {:ok, state_entry} =
@@ -32,7 +37,9 @@ defmodule Zapp.Server do
         list when is_list(list) -> State.put(state_entry, list)
       end
 
+    Code.put_compiler_option(:ignore_module_conflict, true)
     state_entry |> State.module_quoted() |> Code.compile_quoted()
+    Code.put_compiler_option(:ignore_module_conflict, false)
     {:reply, :ok, Map.put(state, module, state_entry)}
   end
 end

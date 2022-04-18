@@ -1,8 +1,7 @@
 defmodule Zapp.ModuleState do
-  @moduledoc """
-  Context for a single module definition, as well as functions for rendering it as quoted
-  code.
-  """
+  @moduledoc false
+
+  ## Private module for internal use
 
   defstruct config_map: %{}, mod_name: nil
 
