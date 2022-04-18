@@ -58,6 +58,18 @@ defmodule ExEnvTest do
     end
   end
 
+  describe "ExEnv.put!/3" do
+    test "can create a module" do
+      ExEnv.put!(TestModuleBangOne, :hello, "world")
+      assert ExEnv.TestModuleBangOne.env(:hello) == "world"
+    end
+
+    test "invalid inputs raises errors" do
+      assert_raise RuntimeError, fn -> ExEnv.put!(:hello, :hello, "world") end
+      assert_raise RuntimeError, fn -> ExEnv.put!(:hello, 123, "world") end
+    end
+  end
+
   describe "ExEnv.put/2" do
     test "can configure module by passing map" do
       ExEnv.put(MapTestingConfigMod, %{hello: "world", this_is: "a map"})
@@ -95,6 +107,22 @@ defmodule ExEnvTest do
 
     test "fails configuration if passed nil config" do
       assert {:error, :invalid_config} == ExEnv.put(IllegalMap, nil)
+    end
+  end
+
+
+  describe "ExEnv.put!/2" do
+    test "can configure module by passing map or keyword list" do
+      ExEnv.put(MapTestingConfigMod, %{hello: "world", this_is: "a map"})
+      ExEnv.put(KeywordListTestingConfigMod, hello: "world", this_is: "a list")
+      assert ExEnv.KeywordListTestingConfigMod.env(:hello) == "world"
+      assert ExEnv.KeywordListTestingConfigMod.env(:this_is) == "a list"
+      assert ExEnv.MapTestingConfigMod.env(:hello) == "world"
+      assert ExEnv.MapTestingConfigMod.env(:this_is) == "a map"
+    end
+
+    test "raises error on failure" do
+      assert_raise RuntimeError, fn -> ExEnv.put!(ListTestingConfig, [1, 2, 3]) end
     end
   end
 

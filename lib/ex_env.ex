@@ -20,6 +20,8 @@ defmodule ExEnv do
   def put(mod, _) when is_atom(mod), do: {:error, :invalid_config}
   def put(_, _), do: {:error, :invalid_module}
 
+  def put!(module, key, value), do: raise_on_error(fn -> put(module, key, value) end) 
+  def put!(module, config), do: raise_on_error(fn -> put(module, config) end) 
 
   def fetch_env(mod, key) when is_valid(mod, key) do
     {:ok, Module.concat(ExEnv, mod).env(key)}
@@ -48,4 +50,12 @@ defmodule ExEnv do
 
   defp valid_entry?({key, _}) when is_atom(key) or is_binary(key), do: true
   defp valid_entry?(_), do: false
+
+  defp raise_on_error(function) do
+    case function.() do
+      {:ok, result} -> result
+      :ok -> :ok
+      {:error, err} -> raise RuntimeError
+    end
+  end
 end
