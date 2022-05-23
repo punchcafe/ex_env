@@ -59,6 +59,7 @@ defmodule Zapp do
     UndefinedFunctionError -> {:ok, nil}
   end
 
+  #TODO: ensure env fetching consistency with zapp
   def fetch_env(mod, _) when is_atom(mod), do: {:error, :invalid_key}
   def fetch_env(_, _), do: {:error, :invalid_module}
 
